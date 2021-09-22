@@ -48,6 +48,8 @@ original_discriminator = True
 
 
 # Import necessary packages for loading the dataset
+from numpy import random
+from data_folder_path import get_data_folder_path
 import numpy as np  # Package for matrix operations, handling data
 np.random.seed(2021)
 import os
@@ -59,6 +61,7 @@ import tensorflow.keras as keras
 import tensorflow
 import copy
 import pickle
+
 
 gpus = tensorflow.config.experimental.list_physical_devices("GPU")
 if len(gpus) > 0:
@@ -175,7 +178,7 @@ else:
     if not os.path.isdir("/CNN2021"):
         print('not in path')
         #! git clone https://github.com/attilasimko/CNN2021.git
-    gen_dir = "/home/fredrik/Documents/Kurser/Teknik/CNNmedical/Lab3/CNN2021/LAB2/" #/CNN2021/LAB2/"
+    gen_dir = get_data_folder_path()#"/home/fredrik/Documents/Kurser/Teknik/CNNmedical/Lab3/CNN2021/LAB2/" #/CNN2021/LAB2/"
     """
     %cd /CNN2021/LAB2/
     ! git pull
@@ -392,7 +395,7 @@ mse = tensorflow.keras.losses.MeanSquaredError()
 # Compile the discriminator
 learning_rate_D = 0.001
 optim_D = optimizers.Adam(lr=learning_rate_D)
-discriminator.compile(loss=[mse], optimizer=optim_D, metrics=["accuracy"])
+discriminator.compile(loss=["binary_crossentropy"], optimizer=optim_D, metrics=["accuracy"])
 #binary_crossentropy
 # NOTE: Are you satisfied with the loss function?
 # NOTE: Are you satisfied with the metric?
@@ -419,12 +422,12 @@ pred = generator(input_1)
 pred_d = discriminator([input_1, pred])
 GAN = Model(inputs=input_1, outputs=[pred_d])
 
-learning_rate_GAN = 0.005
+learning_rate_GAN = 0.00001
 optim_GAN = optimizers.Adam(lr=learning_rate_GAN)
 # The layers of the discriminator inside the GAN will be non-trainable
 # The layers of the discriminator in the discriminator are still trainable.
-GAN.compile(loss=["mean_squared_error"], optimizer=optim_GAN, metrics=["accuracy"])
-#binary_crossentropy
+GAN.compile(loss=["binary_crossentropy"], optimizer=optim_GAN, metrics=["accuracy"])
+#binary_crossentropy mean_squared_error
 
 # In[35]:
 
@@ -434,8 +437,8 @@ from IPython.display import clear_output
 # Fit the model to the dataset
 n_epochs = 10
 
-fake_labels = np.zeros((batch_size, 1))
-real_labels = np.ones((batch_size, 1))
+fake_labels = 0.2 * np.random.random_sample((batch_size, 1))   #np.zeros((batch_size, 1))
+real_labels = 0.2 * np.random.random_sample((batch_size, 1)) + 0.8
 
 loss_D = []
 acc_D = []
