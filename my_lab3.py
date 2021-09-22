@@ -175,7 +175,8 @@ else:
     if not os.path.isdir("/CNN2021"):
         print('not in path')
         #! git clone https://github.com/attilasimko/CNN2021.git
-    gen_dir = "/home/fredrik/Documents/Kurser/Teknik/CNNmedical/Lab3/CNN2021/LAB2/" #/CNN2021/LAB2/"
+    gen_dir = "/home/fredrik/Documents/Kurser/Teknik/CNNMedical/CNN2021/LAB2/"
+#/home/fredrik/Documents/Kurser/Teknik/CNNmedical/Lab3/CNN2021/LAB2/" #/CNN2021/LAB2/"
     """
     %cd /CNN2021/LAB2/
     ! git pull
@@ -392,8 +393,8 @@ mse = tensorflow.keras.losses.MeanSquaredError()
 # Compile the discriminator
 learning_rate_D = 0.001
 optim_D = optimizers.Adam(lr=learning_rate_D)
-discriminator.compile(loss=[mse], optimizer=optim_D, metrics=["accuracy"])
-#binary_crossentropy
+discriminator.compile(loss=["binary_crossentropy"], optimizer=optim_D, metrics=["accuracy"])
+#binary_crossentropy mse
 # NOTE: Are you satisfied with the loss function?
 # NOTE: Are you satisfied with the metric?
 # NOTE: Are you satisfied with the optimizer and its parameters?
@@ -419,12 +420,12 @@ pred = generator(input_1)
 pred_d = discriminator([input_1, pred])
 GAN = Model(inputs=input_1, outputs=[pred_d])
 
-learning_rate_GAN = 0.005
+learning_rate_GAN = 0.0005
 optim_GAN = optimizers.Adam(lr=learning_rate_GAN)
 # The layers of the discriminator inside the GAN will be non-trainable
 # The layers of the discriminator in the discriminator are still trainable.
-GAN.compile(loss=["mean_squared_error"], optimizer=optim_GAN, metrics=["accuracy"])
-#binary_crossentropy
+GAN.compile(loss=["binary_crossentropy"], optimizer=optim_GAN, metrics=["accuracy"])
+#binary_crossentropy mean_squared_error
 
 # In[35]:
 
@@ -432,7 +433,7 @@ GAN.compile(loss=["mean_squared_error"], optimizer=optim_GAN, metrics=["accuracy
 from IPython.display import clear_output
 
 # Fit the model to the dataset
-n_epochs = 10
+n_epochs = 100
 
 fake_labels = np.zeros((batch_size, 1))
 real_labels = np.ones((batch_size, 1))
