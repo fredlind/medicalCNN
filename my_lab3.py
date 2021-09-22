@@ -61,7 +61,7 @@ import tensorflow.keras as keras
 import tensorflow
 import copy
 import pickle
-
+from hyper_parameters import *
 
 gpus = tensorflow.config.experimental.list_physical_devices("GPU")
 if len(gpus) > 0:
@@ -310,13 +310,13 @@ else:
     def build_generator(height, width, channels):
         model = networks.build_model(height, width, channels, 
                                          n_data=n_data,
-                                         filtin = 3,  
-                                         filt = 4,
+                                         filtin = filtin,  
+                                         filt = filt,
                                          short_connect=True, 
-                                         depth = 5, 
-                                         activation='relu',
-                                         kernel_initializer='he_normal',
-                                         dropout=0.0)
+                                         depth = depth, 
+                                         activation=gen_activation,
+                                         kernel_initializer=gen_kernel_init,
+                                         dropout=gen_dropout)
         
         return model
 
@@ -393,7 +393,7 @@ def dice_coef(y_true, y_pred, smooth=1):
 mse = tensorflow.keras.losses.MeanSquaredError()
 
 # Compile the discriminator
-learning_rate_D = 0.001
+
 optim_D = optimizers.Adam(lr=learning_rate_D)
 discriminator.compile(loss=["binary_crossentropy"], optimizer=optim_D, metrics=["accuracy"])
 #binary_crossentropy
@@ -422,7 +422,7 @@ pred = generator(input_1)
 pred_d = discriminator([input_1, pred])
 GAN = Model(inputs=input_1, outputs=[pred_d])
 
-learning_rate_GAN = 0.00001
+
 optim_GAN = optimizers.Adam(lr=learning_rate_GAN)
 # The layers of the discriminator inside the GAN will be non-trainable
 # The layers of the discriminator in the discriminator are still trainable.
